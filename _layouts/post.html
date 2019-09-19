@@ -1,37 +1,75 @@
 ---
-layout: default
+layout: comments
 ---
-<div class="row">
-  <div id="myArticle" class="col-sm-9">
-    <div class="post-area post">
-      <header>
-        <h1>{{ page.title }}</h1>
-        <p>{{ page.date | date: "%b %-d, %Y" }}{% if page.author %} • {{ page.author }}{% endif %}{% if page.meta %} • {{ page.meta }}{% endif %}</p>
-      </header>
-      <hr>
-      <article>
-        {{content}}
-      </article>
-      <hr>
-      <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a><a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a></div>
-      <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
-    </div>
-    <div class="post-area post comment">
-      <!-- 多说评论框 start -->
-      
-      <div class="ds-thread" data-thread-key="{{ page.id }}" data-title="{{ page.title }}" data-url="gaohaoyang.github.io{{ page.url }}"></div>
-      
-      <!-- 多说评论框 end -->
+<div class="post">
+  {% if site.post.meta.enable %}
+  <small class="post-date">
+    {% if site.post.meta.date %}
+    <i class="fas fa-calendar-day"></i>
+    {{ page.date | date_to_string }}
+    {% endif %}
+    {% if site.post.meta.wordcount.enable %}
+    <i class="fas fa-file-word"></i>
+    {{ page.content | strip_html | strip_newlines | remove: " " | size }}{{ site.post.meta.wordcount.unit }}
+    {% endif %}
+    {% if site.post.meta.readtime.enable %}
+    <i class="fas fa-coffee"></i>
+    {{ page.content | strip_html | strip_newlines | remove: " " | size | divided_by: site.post.meta.readtime.divided_by | plus: 1 }}{{ site.post.meta.readtime.unit }}
+    {% endif %}
+    {% if site.post.meta.visitor.enable %}
+    <span id="{{ page.url }}" class="leancloud-visitors" data-flag-title="{{ page.title }}">
+      <i class="far fa-eye"></i>
+      <span class="leancloud-visitors-count"></span>{{ site.post.meta.visitor.unit }}
+    </span>
+    {% endif %}
+    {% for node in page.tags %}
+    <i class="fas fa-tag"></i>
+    {{ node }}
+    {% endfor %}
+    </br>
+    {{ site.post.meta.copyright }}
+  </small>
+  {% if page.background_music %}
+  <div>
+    {{ page.background_music }}
+  </div>
+  {% endif %}
+  {% endif %}
+  <div class="post-content">
+    {{ content }}
+  </div>
+  {% if site.post.related.enable %}
+  <div class="related">
+    {{ site.post.related.title }}
+    <ul class="related-posts">
+      {% for post in site.related_posts limit:3 %}
+      <li>
+        <a href="{{ site.baseurl }}{{ post.url }}">
+          {{ post.title }}
+          <small>{{ post.date | date_to_string }}</small>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  {% if site.post.reward.enable %}
+  <div class="reward">
+    <button id="rewardButton" disable="enable"
+      onclick="var qr = document.getElementById('rewardQRs'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>{{ site.post.reward.text }}</span>
+    </button>
+    <div id="rewardQRs">
+      <table>
+        <tr>
+          {% for node in site.post.reward.img %}
+          <td id="{{ node.id }}" class="reward_qr">
+            <img id="{{ node.id }}_qr" src="{{ node.src }}" alt="{{ site.author }}{{ node.id }}">
+          </td>
+          {% endfor %}
+        </tr>
+      </table>
     </div>
   </div>
-
-  <div id="content" class="col-sm-3">
-    <!-- <div id="myAffix" class="shadow-bottom-center hidden-xs" data-spy="affix" data-offset-top="0" data-offset-bottom="-20"> -->
-    <div id="myAffix" class="shadow-bottom-center hidden-xs" >
-      <div class="categories-list-header">
-        Content
-      </div>
-      <div class="content-text"></div>
-    </div>
-  </div>
+  {% endif %}
 </div>
